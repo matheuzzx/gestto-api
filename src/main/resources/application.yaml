@@ -1,3 +1,15 @@
 spring:
   application:
-    name: gestto
+    name: gestto-api
+  datasource:
+    url: {POSTGRES_URL}
+    username: {POSTGRES_USERNAME}
+    password: {POSTGRES_PASSWORD}
+    driver-class-name:  org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: {DDL_AUTO:false}
+    show-sql: {SHOW_SQL:false}
+    properties:
+      hibernate:
+        format_sql: true

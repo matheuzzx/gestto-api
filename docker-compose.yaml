@@ -1,0 +1,49 @@
+services:
+
+  # ==========================================
+  # PostgreSQL
+  # ==========================================
+  db:
+    image: postgres:18.7
+    container_name: gestto-db
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql
+
+
+  # ==========================================
+  # Gestto API
+  # ==========================================
+  gestto:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: gestto-api
+    restart: unless-stopped
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_JPA_HIBERNATE_DDL-AUTO: ${DDL_AUTO}
+      SPRING_JPA_HIBERNATE_SHOW-SQL: ${SHOW_SQL}
+
+    ports:
+      - "8080:8080"
+
+
+# ==========================================
+# Persistent volumes
+# ==========================================
+volumes:
+  postgres_data:
