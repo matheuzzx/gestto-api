@@ -19,6 +19,12 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql
 
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
 
   # ==========================================
   # Gestto API
@@ -31,12 +37,16 @@ services:
     container_name: gestto-api
     restart: unless-stopped
 
+    depends_on:
+      db:
+        condition: service_healthy
+
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
-      SPRING_JPA_HIBERNATE_DDL-AUTO: ${DDL_AUTO}
-      SPRING_JPA_HIBERNATE_SHOW-SQL: ${SHOW_SQL}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: ${DDL_AUTO}
+      SPRING_JPA_HIBERNATE_SHOW_SQL: ${SHOW_SQL}
 
     ports:
       - "8080:8080"
